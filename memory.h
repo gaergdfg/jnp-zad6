@@ -15,13 +15,15 @@ private:
 public:
 	Memory(size_t memory_size);
 
-	int64_t get(int64_t i);
+	int64_t get(int64_t i) const;
 
 	void set(int64_t i, int64_t value);
 
 	void create_var(const std::string &id, int64_t value);
 
-	size_t get_index_of_var(const std::string &id);
+	size_t get_index_of_var(const std::string &id) const;
+
+	size_t size() const { return memory.size(); }
 
 private:
 	size_t variables_count;
