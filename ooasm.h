@@ -6,6 +6,7 @@
 #ifndef OOASM_H
 #define OOASM_H
 
+// TODO: co z wydzieleniem klasy identyfikatora?
 
 // TODO: to chyba powinny byc funkcje-wrappery konstruktorow w jakims factory.h
 using num = Num;
@@ -27,40 +28,22 @@ using ones = OneS;
 
 /* =============== OOASM Elements =============== */
 
-class OOASMElement {
-
-public:
-	virtual ~OOASMElement() = default;
-
-	virtual void evaluate() const = 0; // TODO: flagi jako argumenty + pamiec
-
-};
-
-
-class LValue : private OOASMElement {
+class LValue {
 
 public:
 	virtual ~LValue() = default;
 
-	virtual void evaluate() const = 0; // TODO: flagi jako argumenty + pamiec
-	
-	using OOASMElement::evaluate;
-	// TODO: czy w ten sposob zachowa informacje, ze evaluate jest virtual?
-	// kwestia - private/public dziedziczenie
+	virtual int64_t evaluate_lvalue(const Memory &memory) const = 0;
 
 };
 
 
-class RValue : private OOASMElement {
+class RValue {
 
 public:
 	virtual ~RValue() = default;
 
-	virtual void evaluate() const = 0; // TODO: flagi jako argumenty + pamiec
-	
-	using OOASMElement::evaluate;
-	// TODO: czy w ten sposob zachowa informacje, ze evaluate jest virtual?
-	// kwestia - private/public dziedziczenie
+	virtual int64_t evaluate_rvalue(const Memory &memory) const = 0;
 
 };
 
@@ -70,7 +53,7 @@ class Num : private RValue {
 public:
 	Num(int64_t val);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
 	int64_t val;
@@ -78,12 +61,14 @@ private:
 };
 
 
-class Mem : virtual LValue, virtual RValue {
+class Mem : private LValue, private RValue {
 
 public:
 	explicit Mem(RValue &addr); // TODO: czy na pewno explicit?
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	virtual int64_t evaluate_lvalue(const Memory &memory) const override;
+
+	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
 	using placeholder = std::unique_ptr<RValue>; // FIXME: zmienic nazwe typu
@@ -95,9 +80,9 @@ private:
 class Lea : private RValue {
 
 public:
-	Lea(std::string &id);
+	Lea(const std::string &id); // TODO: sprawdzenie id
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
 	std::string id;
@@ -120,7 +105,7 @@ public:
 class Data : private OOASMInstruction {
 
 public:
-	Data(std::string &id, Num val);
+	Data(const std::string &id, Num val); // TODO: sprawdzenie id
 
 	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
 

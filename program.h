@@ -18,7 +18,13 @@ private:
 public:
 	Program(std::initializer_list<OOASMInstruction*>);
 
-	OOASMInstruction *get(int64_t i);
+	// OOASMInstruction *get(int64_t i); // TODO: to czy iteratory?
+
+	using iterator = std::vector<type_t>::const_iterator;
+
+	iterator begin() { return instructions.begin(); }
+
+	iterator end() { return instructions.end(); }
 
 private:
 	std::vector<type_t> instructions;

@@ -10,18 +10,22 @@
 class Memory {
 
 private:
-	using type_t = int64_t;
 	using dict_t = std::map<std::string, size_t>;
 
 public:
 	Memory(size_t memory_size);
 
-	type_t get(int64_t i);
+	int64_t get(int64_t i);
 
-	void set(int64_t i);
+	void set(int64_t i, int64_t value);
+
+	void create_var(const std::string &id, int64_t value);
+
+	size_t get_index_of_var(const std::string &id);
 
 private:
-	std::vector<type_t> memory; // TODO: czy alias na typ vectora?
+	size_t variables_count;
+	std::vector<int64_t> memory;
 	dict_t indexing;
 
 };
