@@ -33,3 +33,6 @@ private:
 
 
 #endif /* PROGRAM_H */
+
+
+//FIXME: klasa Id

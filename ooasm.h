@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "flag_handler.h"
 #include <string>
 #include <memory>
 
@@ -66,6 +67,8 @@ class Mem : private LValue, private RValue {
 public:
 	explicit Mem(RValue &addr); // TODO: czy na pewno explicit?
 
+	~Mem() = default;
+
 	virtual int64_t evaluate_lvalue(const Memory &memory) const override;
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
@@ -82,6 +85,8 @@ class Lea : private RValue {
 public:
 	Lea(const std::string &id); // TODO: sprawdzenie id
 
+	~Lea() = default;
+
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
@@ -97,17 +102,19 @@ class OOASMInstruction {
 public:
 	virtual ~OOASMInstruction() = default;
 
-	virtual void evaluate() const = 0;
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const = 0;
 
 };
 
 
-class Data : private OOASMInstruction {
+class Data final : private OOASMInstruction {
 
 public:
 	Data(const std::string &id, Num val); // TODO: sprawdzenie id
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Data() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	std::string id;
@@ -116,26 +123,30 @@ private:
 };
 
 
-class Mov : private OOASMInstruction {
+class Mov final : private OOASMInstruction {
 
 public:
-	Mov(LValue &src, RValue &dst);
+	Mov(LValue &dst, RValue &src);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Mov() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *src; // TODO: unique_ptr<LValue>?
-	RValue *dst; // TODO: unique_ptr<RValue>?
+	LValue *dst; // TODO: unique_ptr<LValue>?
+	RValue *src; // TODO: unique_ptr<RValue>?
 
 };
 
 
-class Add : private OOASMInstruction {
+class Add final : private OOASMInstruction {
 
 public:
 	Add(LValue &arg1, RValue &arg2);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Add() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg1; // TODO: unique_ptr<LValue>?
@@ -144,12 +155,14 @@ private:
 };
 
 
-class Sub : private OOASMInstruction {
+class Sub final : private OOASMInstruction {
 
 public:
 	Sub(LValue &arg1, RValue &arg2);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Sub() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg1; // TODO: unique_ptr<LValue>?
@@ -158,12 +171,14 @@ private:
 };
 
 
-class Inc : private OOASMInstruction {
+class Inc final : private OOASMInstruction {
 	
 public:
 	Inc(LValue &arg);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Inc() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg; // TODO: unique_ptr<LValue>?
@@ -171,12 +186,14 @@ private:
 };
 
 
-class Dec : private OOASMInstruction {
+class Dec final : private OOASMInstruction {
 	
 public:
 	Dec(LValue &arg);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~Dec() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg; // TODO: unique_ptr<LValue>?
@@ -184,12 +201,14 @@ private:
 };
 
 
-class One : private OOASMInstruction {
+class One final : private OOASMInstruction {
 
 public:
 	One(LValue &arg);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~One() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg; // TODO: unique_ptr<LValue>?
@@ -197,12 +216,14 @@ private:
 };
 
 
-class OneZ : private OOASMInstruction {
+class OneZ final : private OOASMInstruction {
 
 public:
 	OneZ(LValue &arg);
+	
+	~OneZ() = default;
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg; // TODO: unique_ptr<LValue>?
@@ -210,12 +231,14 @@ private:
 };
 
 
-class OneS : private OOASMInstruction {
+class OneS final : private OOASMInstruction {
 
 public:
 	OneS(LValue &arg);
 
-	virtual void evaluate() const override; // TODO: flagi jako argumenty + pamiec
+	~OneS() = default;
+
+	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
 	LValue *arg; // TODO: unique_ptr<LValue>?
