@@ -29,16 +29,6 @@ using ones = OneS;
 
 /* =============== OOASM Elements =============== */
 
-class LValue {
-
-public:
-	virtual ~LValue() = default;
-
-	virtual int64_t evaluate_lvalue(const Memory &memory) const = 0;
-
-};
-
-
 class RValue {
 
 public:
@@ -49,7 +39,17 @@ public:
 };
 
 
-class Num : private RValue {
+class LValue : public RValue {
+
+public:
+	virtual ~LValue() = default;
+
+	virtual int64_t evaluate_lvalue(const Memory &memory) const = 0;
+
+};
+
+
+class Num final : public RValue {
 
 public:
 	Num(int64_t val);
@@ -62,7 +62,7 @@ private:
 };
 
 
-class Mem : private LValue, private RValue {
+class Mem final : public LValue {
 
 public:
 	explicit Mem(RValue &addr); // TODO: czy na pewno explicit?
@@ -80,7 +80,7 @@ private:
 };
 
 
-class Lea : private RValue {
+class Lea final : public RValue {
 
 public:
 	Lea(const std::string &id); // TODO: sprawdzenie id
@@ -107,7 +107,7 @@ public:
 };
 
 
-class Data final : private OOASMInstruction {
+class Data final : public OOASMInstruction {
 
 public:
 	Data(const std::string &id, Num val); // TODO: sprawdzenie id
@@ -123,7 +123,7 @@ private:
 };
 
 
-class Mov final : private OOASMInstruction {
+class Mov final : public OOASMInstruction {
 
 public:
 	Mov(LValue &dst, RValue &src);
@@ -139,7 +139,7 @@ private:
 };
 
 
-class Add final : private OOASMInstruction {
+class Add final : public OOASMInstruction {
 
 public:
 	Add(LValue &arg1, RValue &arg2);
@@ -155,7 +155,7 @@ private:
 };
 
 
-class Sub final : private OOASMInstruction {
+class Sub final : public OOASMInstruction {
 
 public:
 	Sub(LValue &arg1, RValue &arg2);
@@ -171,7 +171,7 @@ private:
 };
 
 
-class Inc final : private OOASMInstruction {
+class Inc final : public OOASMInstruction {
 	
 public:
 	Inc(LValue &arg);
@@ -186,7 +186,7 @@ private:
 };
 
 
-class Dec final : private OOASMInstruction {
+class Dec final : public OOASMInstruction {
 	
 public:
 	Dec(LValue &arg);
@@ -201,7 +201,7 @@ private:
 };
 
 
-class One final : private OOASMInstruction {
+class One final : public OOASMInstruction {
 
 public:
 	One(LValue &arg);
@@ -216,7 +216,7 @@ private:
 };
 
 
-class OneZ final : private OOASMInstruction {
+class OneZ final : public OOASMInstruction {
 
 public:
 	OneZ(LValue &arg);
@@ -231,7 +231,7 @@ private:
 };
 
 
-class OneS final : private OOASMInstruction {
+class OneS final : public OOASMInstruction {
 
 public:
 	OneS(LValue &arg);
