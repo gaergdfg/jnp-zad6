@@ -23,7 +23,7 @@ public:
 
 	size_t get_index_of_var(const std::string &id) const;
 
-	size_t size() const { return memory.size(); }
+	size_t size() const { return memory.size(); }//TODO: czy iterator?
 
 private:
 	size_t variables_count;

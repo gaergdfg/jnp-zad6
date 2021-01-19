@@ -8,7 +8,7 @@ Computer::Computer(size_t memory_size) :
 
 void Computer::boot(Program program) {
 	for (auto &instruction : program) {
-		instruction->evaluate();
+		instruction->evaluate(memory, flag_handler);
 	}
 }
 

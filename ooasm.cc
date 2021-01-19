@@ -1,6 +1,13 @@
 #include "ooasm.h"
 
 
+/* =============== Utility functions =============== */
+
+void set_flags(FlagHandler &flag_handler, int64_t value) {
+    flag_handler.set(FlagHandler::FlagType::zero, value == 0);
+    flag_handler.set(FlagHandler::FlagType::sign, value < 0);
+}
+
 /* =============== OOASM Elements =============== */
 
 int64_t Num::evaluate_rvalue(const Memory &) const {
@@ -8,8 +15,8 @@ int64_t Num::evaluate_rvalue(const Memory &) const {
 }
 
 
-int64_t Mem::evaluate_lvalue(const Memory &memory) const {
-    return addr->evaluate_rvalue(memory);
+void Mem::set_lvalue(Memory &memory, int64_t value) const {
+    memory.set(addr->evaluate_rvalue(memory), value);
 }
 
 
@@ -31,27 +38,52 @@ void Data::evaluate(Memory &memory, FlagHandler &) const {
 
 
 void Mov::evaluate(Memory &memory, FlagHandler &) const {
-    memory.set(dst->evaluate_lvalue(memory), src->evaluate_rvalue(memory));
+    dst->set_lvalue(memory, src->evaluate_rvalue(memory));
 }
 
 
 void Add::evaluate(Memory &memory, FlagHandler &flag_handler) const {
-    int64_t index = arg1->evaluate_lvalue(memory);
-    int64_t value_original = memory.get(index);
-    int64_t value_to_add = arg2->evaluate_rvalue(memory);
+    int64_t value = arg1->evaluate_rvalue(memory) + arg2->evaluate_rvalue(memory);
 
-    // memory.set(index, value_original + value_to_add);
-    arg1.set(index, value_original + value_to_add);
-
-    // FIXME: ustawienie flag
+    arg1->set_lvalue(memory, value);
+    set_flags(flag_handler, value);
 }
 
 
 void Sub::evaluate(Memory &memory, FlagHandler &flag_handler) const {
-    int64_t index = arg1->evaluate_lvalue(memory);
-    int64_t value_original = memory.get(index);
-    int64_t value_to_add = arg2->evaluate_rvalue(memory);
+    int64_t value = arg1->evaluate_rvalue(memory) - arg2->evaluate_rvalue(memory);
 
-    memory.set(index, value_original - value_to_add);
-    // FIXME: ustawienie flag
+    arg1->set_lvalue(memory, value);
+    set_flags(flag_handler, value);
 }
+
+void Inc::evaluate(Memory &memory, FlagHandler &flag_handler) const {
+    int64_t value = arg->evaluate_rvalue(memory) + 1;
+
+    arg->set_lvalue(memory, value);
+    set_flags(flag_handler, value);
+}
+
+void Dec::evaluate(Memory &memory, FlagHandler &flag_handler) const {
+    int64_t value = arg->evaluate_rvalue(memory) - 1;
+
+    arg->set_lvalue(memory, value);
+    set_flags(flag_handler, value);
+}
+
+void One::evaluate(Memory &memory, FlagHandler &flag_handler) const {
+    arg->set_lvalue(memory, 1);
+}
+
+void OneZ::evaluate(Memory &memory, FlagHandler &flag_handler) const {
+    if (flag_handler.get(FlagHandler::FlagType::zero)) {
+        arg->set_lvalue(memory, 1);
+    }
+}
+
+void OneS::evaluate(Memory &memory, FlagHandler &flag_handler) const {
+    if (flag_handler.get(FlagHandler::FlagType::sign)) {
+        arg->set_lvalue(memory, 1);
+    }
+}
+

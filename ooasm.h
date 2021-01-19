@@ -44,7 +44,7 @@ class LValue : public RValue {
 public:
 	virtual ~LValue() = default;
 
-	virtual int64_t evaluate_lvalue(const Memory &memory) const = 0;
+	virtual void set_lvalue(Memory &memory, int64_t value) const = 0;
 
 };
 
@@ -69,7 +69,7 @@ public:
 
 	~Mem() = default;
 
-	virtual int64_t evaluate_lvalue(const Memory &memory) const override;
+	virtual void set_lvalue(Memory &memory, int64_t value) const override;
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
