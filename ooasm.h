@@ -1,30 +1,13 @@
+#ifndef OOASM_H
+#define OOASM_H
 #include "memory.h"
 #include "flag_handler.h"
 #include <string>
 #include <memory>
 
-
-#ifndef OOASM_H
-#define OOASM_H
-
 // TODO: co z wydzieleniem klasy identyfikatora?
 
 // TODO: to chyba powinny byc funkcje-wrappery konstruktorow w jakims factory.h
-using num = Num;
-using mem = Mem;
-using lea = Lea;
-
-using data = Data;
-using mov = Mov;
-
-using add = Add;
-using sub = Sub;
-using inc = Inc;
-using dec = Dec;
-
-using one = One;
-using onez = OneZ;
-using ones = OneS;
 
 
 /* =============== OOASM Elements =============== */
@@ -33,6 +16,8 @@ class RValue {
 
 public:
 	virtual ~RValue() = default;
+
+	virtual RValue *clone() const = 0;
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const = 0;
 
@@ -44,6 +29,8 @@ class LValue : public RValue {
 public:
 	virtual ~LValue() = default;
 
+	virtual LValue *clone() const = 0;
+
 	virtual void set_lvalue(Memory &memory, int64_t value) const = 0;
 
 };
@@ -52,7 +39,9 @@ public:
 class Num final : public RValue {
 
 public:
-	Num(int64_t val);
+	Num(int64_t val) : val(val) {}
+
+	virtual Num *clone() const override { return new Num(*this); }
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
@@ -65,9 +54,15 @@ private:
 class Mem final : public LValue {
 
 public:
-	explicit Mem(RValue &addr); // TODO: czy na pewno explicit?
+	explicit Mem(const RValue &addr) : addr(addr.clone()) {} // TODO: czy na pewno explicit?
 
-	~Mem() = default;
+	Mem(const Mem &other) : addr(nullptr) {
+		if (other.addr.get() != nullptr) {
+			addr = placeholder(other.addr->clone());
+		}
+	}
+
+	virtual Mem *clone() const override { return new Mem(*this); }
 
 	virtual void set_lvalue(Memory &memory, int64_t value) const override;
 
@@ -83,9 +78,12 @@ private:
 class Lea final : public RValue {
 
 public:
-	Lea(const std::string &id); // TODO: sprawdzenie id
+	Lea(const std::string &id) : id(id) {} // TODO: sprawdzenie id
 
 	~Lea() = default;
+
+	virtual Lea *clone() const override { return new Lea(*this); }
+
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
@@ -110,7 +108,7 @@ public:
 class Data final : public OOASMInstruction {
 
 public:
-	Data(const std::string &id, Num val); // TODO: sprawdzenie id
+	Data(const std::string &id, Num val) : id(id), val(val) {} // TODO: sprawdzenie id
 
 	~Data() = default;
 
@@ -126,15 +124,15 @@ private:
 class Mov final : public OOASMInstruction {
 
 public:
-	Mov(LValue &dst, RValue &src);
+	Mov(const LValue &dst, const RValue &src) : dst(dst.clone()), src(src.clone()) {}
 
 	~Mov() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *dst; // TODO: unique_ptr<LValue>?
-	RValue *src; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> dst; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<RValue> src; // TODO: unique_ptr<RValue>?
 
 };
 
@@ -142,15 +140,15 @@ private:
 class Add final : public OOASMInstruction {
 
 public:
-	Add(LValue &arg1, RValue &arg2);
+	Add(const LValue &arg1, const RValue &arg2) : arg1(arg1.clone()), arg2(arg2.clone()) {}
 
 	~Add() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg1; // TODO: unique_ptr<LValue>?
-	RValue *arg2; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> arg1; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<RValue> arg2; // TODO: unique_ptr<RValue>?
 
 };
 
@@ -158,15 +156,15 @@ private:
 class Sub final : public OOASMInstruction {
 
 public:
-	Sub(LValue &arg1, RValue &arg2);
+	Sub(const LValue &arg1, const RValue &arg2) : arg1(arg1.clone()), arg2(arg2.clone()) {}
 
 	~Sub() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg1; // TODO: unique_ptr<LValue>?
-	RValue *arg2; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> arg1; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<RValue> arg2; // TODO: unique_ptr<RValue>?
 
 };
 
@@ -174,14 +172,14 @@ private:
 class Inc final : public OOASMInstruction {
 	
 public:
-	Inc(LValue &arg);
+	Inc(const LValue &arg) : arg(arg.clone()) {}
 
 	~Inc() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg;
 
 };
 
@@ -189,14 +187,14 @@ private:
 class Dec final : public OOASMInstruction {
 	
 public:
-	Dec(LValue &arg);
+	Dec(const LValue &arg) : arg(arg.clone()) {}
 
 	~Dec() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
 
 };
 
@@ -204,14 +202,14 @@ private:
 class One final : public OOASMInstruction {
 
 public:
-	One(LValue &arg);
+	One(const LValue &arg) : arg(arg.clone()) {}
 
 	~One() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
 
 };
 
@@ -219,30 +217,28 @@ private:
 class OneZ final : public OOASMInstruction {
 
 public:
-	OneZ(LValue &arg);
+	OneZ(const LValue &arg) : arg(arg.clone()) {}
 	
 	~OneZ() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg; // TODO: unique_ptr<LValue>?
-
+	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
 };
 
 
 class OneS final : public OOASMInstruction {
 
 public:
-	OneS(LValue &arg);
+	OneS(const LValue &arg) : arg(arg.clone()) {}
 
 	~OneS() = default;
 
 	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
 
 private:
-	LValue *arg; // TODO: unique_ptr<LValue>?
-
+	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
 };
 
 

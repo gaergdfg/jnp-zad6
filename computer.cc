@@ -6,7 +6,7 @@ Computer::Computer(size_t memory_size) :
 	flag_handler(FlagHandler()) {}
 
 
-void Computer::boot(Program program) {
+void Computer::boot(const Program &program) { //FIXME: wyzerowanie pamięci
 	for (auto &instruction : program) {
 		instruction->evaluate(memory, flag_handler);
 	}

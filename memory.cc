@@ -6,7 +6,7 @@ Memory::Memory(size_t memory_size) :
 	memory(std::vector<int64_t>(memory_size)) {}
 
 
-int64_t Memory::get(int64_t i) {
+int64_t Memory::get(int64_t i) const {
 	if (i < 0 || i >= memory.size()) {
 		throw std::out_of_range("Index out of range.");
 	}
@@ -34,6 +34,6 @@ void Memory::create_var(const std::string &id, int64_t value) {
 }
 
 
-size_t Memory::get_index_of_var(const std::string &id) {
+size_t Memory::get_index_of_var(const std::string &id) const {
 	return indexing.at(id);
 }

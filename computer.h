@@ -1,3 +1,5 @@
+#ifndef COMPUTER_H
+#define COMPUTER_H
 #include "ooasm.h"
 #include "memory.h"
 #include "flag_handler.h"
@@ -6,16 +8,12 @@
 #include <ostream>
 
 
-#ifndef COMPUTER_H
-#define COMPUTER_H
-
-
 class Computer {
 
 public:
 	Computer(size_t memory_size);
 
-	void boot(Program program);
+	void boot(const Program &program);
 
 	void memory_dump(std::ostream &stream) const;
 
