@@ -1,10 +1,10 @@
 #include "flag_handler.h"
+#include <stdexcept>
 
 
 FlagHandler::FlagHandler() : flag_zero(false), flag_sign(false) {}
 
 
-// TODO: czy rzucac wyjatkami?
 bool FlagHandler::get(FlagType flag_type) {
 	switch (flag_type) {
 		case FlagType::zero:
@@ -12,7 +12,7 @@ bool FlagHandler::get(FlagType flag_type) {
 		case FlagType::sign:
 			return flag_sign;
 		default:
-			return false;
+			throw std::invalid_argument("Invalid flag type.");
 	}
 }
 
@@ -26,6 +26,12 @@ void FlagHandler::set(FlagType flag_type, bool val) {
 			flag_sign = val;
 			break;
 		default:
-			break;
+			throw std::invalid_argument("Invalid flag type.");
 	}
+}
+
+
+void FlagHandler::reset() {
+	flag_zero = false;
+	flag_sign = false;
 }

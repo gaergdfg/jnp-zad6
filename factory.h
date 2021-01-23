@@ -1,7 +1,8 @@
 #ifndef FACTORY_H
 #define FACTORY_H
+
+
 #include "ooasm.h"
-// #include "program.h"
 
 
 using num = Num;
@@ -9,22 +10,48 @@ using mem = Mem;
 using lea = Lea;
 
 
-Data *data(const std::string &id, Num val);
+inline Data *data(const Id &id, Num val) {
+	return new Data(id, val);
+}
 
-Mov *mov(const LValue &dst, const RValue &src);
 
-Add *add(const LValue &arg1, const RValue &arg2);
+inline Mov *mov(const LValue &dst, const RValue &src) {
+	return new Mov(dst, src);
+}
 
-Sub *sub(const LValue &arg1, const RValue &arg2);
+inline Add *add(const LValue &arg1, const RValue &arg2) {
+	return new Add(arg1, arg2);
+}
 
-Inc *inc(const LValue &arg);
 
-Dec *dec(const LValue &arg);
+inline Sub *sub(const LValue &arg1, const RValue &arg2) {
+	return new Sub(arg1, arg2);
+}
 
-One *one(const LValue &arg);
 
-OneZ *onez(const LValue &arg);
+inline Inc *inc(const LValue &arg) {
+	return new Inc(arg);
+}
 
-OneS *ones(const LValue &arg);
+
+inline Dec *dec(const LValue &arg) {
+	return new Dec(arg);
+}
+
+
+inline One *one(const LValue &arg) {
+	return new One(arg);
+}
+
+
+inline OneZ *onez(const LValue &arg) {
+	return new OneZ(arg);
+}
+
+
+inline OneS *ones(const LValue &arg) {
+	return new OneS(arg);
+}
+
 
 #endif /* FACTORY_H */

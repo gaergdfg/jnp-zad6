@@ -13,6 +13,6 @@ macro (add_executable _name)
     endif()
 endmacro()
 
-add_executable(ooasm_example ooasm_example.cc computer.cc flag_handler.cc memory.cc ooasm.cc factory.cc)
+add_executable(ooasm_example ooasm_example.cc computer.cc flag_handler.cc memory.cc ooasm.cc)
 
 install(TARGETS DESTINATION .)

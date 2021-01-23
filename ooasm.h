@@ -1,13 +1,12 @@
 #ifndef OOASM_H
 #define OOASM_H
+
+
+#include "id.h"
 #include "memory.h"
 #include "flag_handler.h"
 #include <string>
 #include <memory>
-
-// TODO: co z wydzieleniem klasy identyfikatora?
-
-// TODO: to chyba powinny byc funkcje-wrappery konstruktorow w jakims factory.h
 
 
 /* =============== OOASM Elements =============== */
@@ -54,11 +53,11 @@ private:
 class Mem final : public LValue {
 
 public:
-	explicit Mem(const RValue &addr) : addr(addr.clone()) {} // TODO: czy na pewno explicit?
+	explicit Mem(const RValue &addr) : addr(addr.clone()) {}
 
 	Mem(const Mem &other) : addr(nullptr) {
 		if (other.addr.get() != nullptr) {
-			addr = placeholder(other.addr->clone());
+			addr = std::unique_ptr<RValue>(other.addr->clone());
 		}
 	}
 
@@ -69,8 +68,7 @@ public:
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
-	using placeholder = std::unique_ptr<RValue>; // FIXME: zmienic nazwe typu
-	placeholder addr;
+	std::unique_ptr<RValue> addr;
 
 };
 
@@ -78,7 +76,7 @@ private:
 class Lea final : public RValue {
 
 public:
-	Lea(const std::string &id) : id(id) {} // TODO: sprawdzenie id
+	Lea(Id id) : id(id) {}
 
 	~Lea() = default;
 
@@ -88,7 +86,7 @@ public:
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
 private:
-	std::string id;
+	Id id;
 
 };
 
@@ -100,7 +98,9 @@ class OOASMInstruction {
 public:
 	virtual ~OOASMInstruction() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const = 0;
+	virtual void evaluate_initialise(Memory &memory, FlagHandler &flag_handler) const {};
+
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {};
 
 };
 
@@ -108,15 +108,15 @@ public:
 class Data final : public OOASMInstruction {
 
 public:
-	Data(const std::string &id, Num val) : id(id), val(val) {} // TODO: sprawdzenie id
+	Data(Id id, Num val) : id(id), val(val) {}
 
 	~Data() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_initialise(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::string id;
-	Num val; // TODO: unique_ptr<Num>?
+	Id id;
+	Num val;
 
 };
 
@@ -128,11 +128,11 @@ public:
 
 	~Mov() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> dst; // TODO: unique_ptr<LValue>?
-	std::unique_ptr<RValue> src; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> dst;
+	std::unique_ptr<RValue> src;
 
 };
 
@@ -144,11 +144,11 @@ public:
 
 	~Add() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg1; // TODO: unique_ptr<LValue>?
-	std::unique_ptr<RValue> arg2; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> arg1;
+	std::unique_ptr<RValue> arg2;
 
 };
 
@@ -160,11 +160,11 @@ public:
 
 	~Sub() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg1; // TODO: unique_ptr<LValue>?
-	std::unique_ptr<RValue> arg2; // TODO: unique_ptr<RValue>?
+	std::unique_ptr<LValue> arg1;
+	std::unique_ptr<RValue> arg2;
 
 };
 
@@ -176,7 +176,7 @@ public:
 
 	~Inc() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
 	std::unique_ptr<LValue> arg;
@@ -191,10 +191,10 @@ public:
 
 	~Dec() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg;
 
 };
 
@@ -206,10 +206,10 @@ public:
 
 	~One() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg;
 
 };
 
@@ -221,10 +221,10 @@ public:
 	
 	~OneZ() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg;
 };
 
 
@@ -235,10 +235,10 @@ public:
 
 	~OneS() = default;
 
-	virtual void evaluate(Memory &memory, FlagHandler &flag_handler) const override; // TODO: flagi jako argumenty + pamiec
+	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::unique_ptr<LValue> arg; // TODO: unique_ptr<LValue>?
+	std::unique_ptr<LValue> arg;
 };
 
 

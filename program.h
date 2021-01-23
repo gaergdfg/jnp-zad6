@@ -1,11 +1,11 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
+
+
 #include "factory.h"
 #include "ooasm.h"
 #include <cstdint>
 #include <vector>
-
-
 
 
 class Program {
@@ -22,8 +22,6 @@ public:
 
 	Program(const Program &) = delete;
 
-	OOASMInstruction *get(int64_t i); // TODO: to czy iteratory?
-
 	using iterator = std::vector<type_t>::const_iterator;
 
 	iterator begin() const { return instructions.begin(); }
@@ -39,6 +37,3 @@ using program = Program;
 
 
 #endif /* PROGRAM_H */
-
-
-//FIXME: klasa Id

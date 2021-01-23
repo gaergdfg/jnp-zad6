@@ -1,5 +1,6 @@
 test
 bin
+build
 .vscode
 
 ooasm_example.cc

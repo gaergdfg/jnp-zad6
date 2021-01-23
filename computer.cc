@@ -6,9 +6,15 @@ Computer::Computer(size_t memory_size) :
 	flag_handler(FlagHandler()) {}
 
 
-void Computer::boot(const Program &program) { //FIXME: wyzerowanie pamięci
+void Computer::boot(const Program &program) {
+	memory.reset();
+	flag_handler.reset();
+
 	for (auto &instruction : program) {
-		instruction->evaluate(memory, flag_handler);
+		instruction->evaluate_initialise(memory, flag_handler);
+	}
+	for (auto &instruction : program) {
+		instruction->evaluate_execute(memory, flag_handler);
 	}
 }
 

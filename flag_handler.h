@@ -16,6 +16,8 @@ public:
 
 	void set(FlagType flag_type, bool val);
 
+	void reset();
+
 private:
 	bool flag_zero;
 	bool flag_sign;
