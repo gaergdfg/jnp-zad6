@@ -1,4 +1,5 @@
 #include "memory.h"
+#include <iostream> //TODO: remove
 
 
 Memory::Memory(size_t memory_size) :
@@ -11,6 +12,9 @@ int64_t Memory::get(int64_t i) const {
 		throw std::out_of_range("Index out of range.");
 	}
 
+	std::cerr << "get " << i << " " << memory[i] << std::endl;
+
+
 	return memory[i];
 }
 
@@ -19,6 +23,8 @@ void Memory::set(int64_t i, int64_t value) {
 	if (i < 0 || i >= static_cast<int64_t>(memory.size())) {
 		throw std::out_of_range("Index out of range.");
 	}
+
+	std::cerr << "set " << i << " " << value << std::endl;
 
 	memory[i] = value;
 }
@@ -40,7 +46,7 @@ size_t Memory::get_index_of_var(const Id &id) const {
 
 
 void Memory::reset() {
-	for (size_t i = 0; i < memory.size(); i++) {
-		memory[i] = 0;
-	}
+	variables_count = 0;
+    std::fill(memory.begin(), memory.end(), 0);
+    indexing.clear();
 }

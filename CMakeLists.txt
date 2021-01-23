@@ -15,4 +15,8 @@ endmacro()
 
 add_executable(ooasm_example ooasm_example.cc computer.cc flag_handler.cc memory.cc ooasm.cc)
 
+add_executable(test_rafal test_rafal.cpp computer.cc flag_handler.cc memory.cc ooasm.cc)
+
+add_executable(test_grzesiek test_grzesiek.cpp computer.cc flag_handler.cc memory.cc ooasm.cc)
+
 install(TARGETS DESTINATION .)

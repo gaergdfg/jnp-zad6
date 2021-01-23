@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 
+#include <iostream> //TODO:
+
 
 /* =============== OOASM Elements =============== */
 
@@ -40,7 +42,10 @@ class Num final : public RValue {
 public:
 	Num(int64_t val) : val(val) {}
 
-	virtual Num *clone() const override { return new Num(*this); }
+	virtual Num *clone() const override {
+		std::cerr << "Num clone" << std::endl;
+		return new Num(*this);
+	}
 
 	virtual int64_t evaluate_rvalue(const Memory &memory) const override;
 
@@ -53,15 +58,18 @@ private:
 class Mem final : public LValue {
 
 public:
-	explicit Mem(const RValue &addr) : addr(addr.clone()) {}
-
-	Mem(const Mem &other) : addr(nullptr) {
-		if (other.addr.get() != nullptr) {
-			addr = std::unique_ptr<RValue>(other.addr->clone());
-		}
+	Mem(const RValue &addr) : addr(addr.clone()) {
+		std::cerr << "CONSTRUCT" << std::endl;//TODO:
 	}
 
-	virtual Mem *clone() const override { return new Mem(*this); }
+	Mem(RValue *addr) : addr(addr) {}
+
+	// Mem(Mem &&) = delete;
+
+	virtual Mem *clone() const override { 
+		std::cerr << "CLONE" << std::endl;//TODO:
+		return new Mem(*this);
+	}
 
 	virtual void set_lvalue(Memory &memory, int64_t value) const override;
 
@@ -69,6 +77,17 @@ public:
 
 private:
 	std::unique_ptr<RValue> addr;
+
+	Mem(const Mem &other) : addr(nullptr) {
+		std::cerr << "RUN" << std::endl;
+		if (other.addr.get() != nullptr) {
+			std::cerr << "Copying inner" << std::endl;//TODO:
+			addr = std::unique_ptr<RValue>(other.addr->clone());
+		}
+		else {
+			std::cerr << "No inner" << std::endl;//TODO:
+		}
+	}
 
 };
 
@@ -108,7 +127,9 @@ public:
 class Data final : public OOASMInstruction {
 
 public:
-	Data(Id id, Num val) : id(id), val(val) {}
+	// Data(Id id, Num val) : id(id), val(val->clone()) {}
+
+	Data(Id id, Num *val) : id(id), val(val) {}
 
 	~Data() = default;
 
@@ -116,7 +137,7 @@ public:
 
 private:
 	Id id;
-	Num val;
+	std::unique_ptr<Num> val;
 
 };
 
@@ -125,6 +146,9 @@ class Mov final : public OOASMInstruction {
 
 public:
 	Mov(const LValue &dst, const RValue &src) : dst(dst.clone()), src(src.clone()) {}
+
+	Mov(LValue *dst, RValue *src) : dst(dst), src(src) {}
+
 
 	~Mov() = default;
 
@@ -142,6 +166,9 @@ class Add final : public OOASMInstruction {
 public:
 	Add(const LValue &arg1, const RValue &arg2) : arg1(arg1.clone()), arg2(arg2.clone()) {}
 
+	Add(LValue *arg1, RValue *arg2) : arg1(arg1), arg2(arg2) {}
+	
+
 	~Add() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -157,6 +184,8 @@ class Sub final : public OOASMInstruction {
 
 public:
 	Sub(const LValue &arg1, const RValue &arg2) : arg1(arg1.clone()), arg2(arg2.clone()) {}
+
+	Sub(LValue *arg1, RValue *arg2) : arg1(arg1), arg2(arg2) {}
 
 	~Sub() = default;
 
@@ -174,6 +203,9 @@ class Inc final : public OOASMInstruction {
 public:
 	Inc(const LValue &arg) : arg(arg.clone()) {}
 
+	Inc(LValue *arg) : arg(arg) {}
+
+
 	~Inc() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -188,6 +220,9 @@ class Dec final : public OOASMInstruction {
 	
 public:
 	Dec(const LValue &arg) : arg(arg.clone()) {}
+
+	Dec(LValue *arg) : arg(arg) {}
+
 
 	~Dec() = default;
 
@@ -204,6 +239,9 @@ class One final : public OOASMInstruction {
 public:
 	One(const LValue &arg) : arg(arg.clone()) {}
 
+	One(LValue *arg) : arg(arg) {}
+
+
 	~One() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -218,6 +256,9 @@ class OneZ final : public OOASMInstruction {
 
 public:
 	OneZ(const LValue &arg) : arg(arg.clone()) {}
+
+	OneZ(LValue *arg) : arg(arg) {}
+
 	
 	~OneZ() = default;
 
@@ -232,6 +273,9 @@ class OneS final : public OOASMInstruction {
 
 public:
 	OneS(const LValue &arg) : arg(arg.clone()) {}
+
+	OneS(LValue *arg) : arg(arg) {}
+
 
 	~OneS() = default;
 
