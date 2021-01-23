@@ -20,8 +20,6 @@ public:
 	void memory_dump(std::ostream &stream) const;
 
 private:
-	using type_t = int64_t;
-
 	Memory memory;
 	FlagHandler flag_handler;
 

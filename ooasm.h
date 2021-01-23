@@ -51,9 +51,7 @@ private:
 class Mem final : public LValue {
 
 public:
-
 	Mem(RValue_t addr) : addr(addr) {}
-
 
 	virtual void set_lvalue(Memory &memory, int64_t value) const override;
 
@@ -130,7 +128,6 @@ class Add final : public OOASMInstruction {
 public:
 	Add(LValue_t arg1, RValue_t arg2) : arg1(arg1), arg2(arg2) {}
 	
-
 	~Add() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -163,7 +160,6 @@ class Inc final : public OOASMInstruction {
 public:
 	Inc(LValue_t arg) : arg(arg) {}
 
-
 	~Inc() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -178,7 +174,6 @@ class Dec final : public OOASMInstruction {
 	
 public:
 	Dec(LValue_t arg) : arg(arg) {}
-
 
 	~Dec() = default;
 
@@ -195,7 +190,6 @@ class One final : public OOASMInstruction {
 public:
 	One(LValue_t arg) : arg(arg) {}
 
-
 	~One() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -211,7 +205,6 @@ class OneZ final : public OOASMInstruction {
 public:
 	OneZ(LValue_t arg) : arg(arg) {}
 
-	
 	~OneZ() = default;
 
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
@@ -225,7 +218,6 @@ class OneS final : public OOASMInstruction {
 
 public:
 	OneS(LValue_t arg) : arg(arg) {}
-
 
 	~OneS() = default;
 
