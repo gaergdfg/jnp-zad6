@@ -1,7 +1,6 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-
 #include "factory.h"
 #include "ooasm.h"
 #include <cstdint>
@@ -11,10 +10,10 @@
 class Program {
 
 private:
-	using type_t = std::unique_ptr<OOASMInstruction>;
+	using type_t = std::shared_ptr<OOASMInstruction>;
 
 public:
-	Program(std::initializer_list<OOASMInstruction*> instructions) {
+	Program(std::initializer_list<type_t> instructions) {
 		for (auto x : instructions) {
 			this->instructions.push_back(type_t(x));
 		}

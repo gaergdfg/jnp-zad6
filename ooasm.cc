@@ -1,6 +1,4 @@
 #include "ooasm.h"
-#include <iostream> //TODO:
-
 
 /* =============== Utility functions =============== */
 
@@ -23,11 +21,7 @@ void Mem::set_lvalue(Memory &memory, int64_t value) const {
 
 
 int64_t Mem::evaluate_rvalue(const Memory &memory) const {
-    // return memory.get(addr->evaluate_rvalue(memory));
-    auto r = memory.get(addr->evaluate_rvalue(memory));
-    std::cerr << "rval " << r << std::endl;
-    return r;
-
+    return memory.get(addr->evaluate_rvalue(memory));
 }
 
 

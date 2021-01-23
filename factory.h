@@ -4,105 +4,52 @@
 
 #include "ooasm.h"
 
-
-// using num = Num;
-// using mem = Mem;
-// using lea = Lea;
-
-inline Num *num(int64_t val) {
-	return new Num(val);
+inline std::shared_ptr<Num> num(int64_t val) {
+	return std::make_shared<Num>(val);
 }
 
-inline Lea *lea(const Id &id) {
-	return new Lea(id);
+inline std::shared_ptr<Lea> lea(const Id &id) {
+	return std::make_shared<Lea>(id);
 }
 
-inline Mem *mem(const RValue &addr) {
-	return new Mem(addr);
+inline std::shared_ptr<Mem> mem(RValue_t addr) {
+	return std::make_shared<Mem>(addr);
 }
 
-inline Mem *mem(RValue *addr) {
-	return new Mem(addr);
+inline std::shared_ptr<Data> data(const Id &id, std::shared_ptr<Num> val) {
+	return std::make_shared<Data>(id, val);
 }
 
-
-// inline Data *data(const Id &id, Num val) {
-// 	return new Data(id, val);
-// }
-
-inline Data *data(const Id &id, Num *val) {
-	return new Data(id, val);
+inline std::shared_ptr<Mov> mov(LValue_t dst, RValue_t src) {
+	return std::make_shared<Mov>(dst, src);
 }
 
-
-inline Mov *mov(const LValue &dst, const RValue &src) {
-	return new Mov(dst, src);
+inline std::shared_ptr<Add> add(LValue_t arg1, RValue_t arg2) {
+	return std::make_shared<Add>(arg1, arg2);
 }
 
-inline Mov *mov(LValue *dst, RValue *src) {
-	return new Mov(dst, src);
+inline std::shared_ptr<Sub> sub(LValue_t arg1, RValue_t arg2) {
+	return std::make_shared<Sub>(arg1, arg2);
 }
 
-inline Add *add(const LValue &arg1, const RValue &arg2) {
-	return new Add(arg1, arg2);
+inline std::shared_ptr<Inc> inc(LValue_t arg) {
+	return std::make_shared<Inc>(arg);
 }
 
-inline Add *add(LValue *arg1, RValue *arg2) {
-	return new Add(arg1, arg2);
+inline std::shared_ptr<Dec> dec(LValue_t arg) {
+	return std::make_shared<Dec>(arg);
 }
 
-
-inline Sub *sub(const LValue &arg1, const RValue &arg2) {
-	return new Sub(arg1, arg2);
+inline std::shared_ptr<One> one(LValue_t arg) {
+	return std::make_shared<One>(arg);
 }
 
-inline Sub *sub(LValue *arg1, RValue *arg2) {
-	return new Sub(arg1, arg2);
+inline std::shared_ptr<OneZ> onez(LValue_t arg) {
+	return std::make_shared<OneZ>(arg);
 }
 
-
-inline Inc *inc(const LValue &arg) {
-	return new Inc(arg);
-}
-
-inline Inc *inc(LValue *arg) {
-	return new Inc(arg);
-}
-
-
-inline Dec *dec(const LValue &arg) {
-	return new Dec(arg);
-}
-
-inline Dec *dec(LValue *arg) {
-	return new Dec(arg);
-}
-
-
-inline One *one(const LValue &arg) {
-	return new One(arg);
-}
-
-inline One *one(LValue *arg) {
-	return new One(arg);
-}
-
-
-inline OneZ *onez(const LValue &arg) {
-	return new OneZ(arg);
-}
-
-inline OneZ *onez(LValue *arg) {
-	return new OneZ(arg);
-}
-
-
-inline OneS *ones(const LValue &arg) {
-	return new OneS(arg);
-}
-
-inline OneS *ones(LValue *arg) {
-	return new OneS(arg);
+inline std::shared_ptr<OneS> ones(LValue_t arg) {
+	return std::make_shared<OneS>(arg);
 }
 
 
