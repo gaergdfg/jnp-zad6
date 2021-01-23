@@ -19,8 +19,7 @@ public:
 	void reset();
 
 private:
-	bool flag_zero;
-	bool flag_sign;
+	bool flag_zero, flag_sign;
 
 };
 

@@ -1,5 +1,6 @@
 #include "memory.h"
 
+
 Memory::Memory(size_t memory_size) :
 	variables_count(0),
 	memory(std::vector<int64_t>(memory_size)) {}

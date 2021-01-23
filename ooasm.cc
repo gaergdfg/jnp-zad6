@@ -1,12 +1,13 @@
 #include "ooasm.h"
 
+
 /* =============== Utility functions =============== */
 
-// TODO: czy namespace/static?
-void set_flags(FlagHandler &flag_handler, int64_t value) {
+void static set_flags(FlagHandler &flag_handler, int64_t value) {
     flag_handler.set(FlagHandler::FlagType::zero, value == 0);
     flag_handler.set(FlagHandler::FlagType::sign, value < 0);
 }
+
 
 /* =============== OOASM Elements =============== */
 
@@ -57,12 +58,14 @@ void Sub::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     set_flags(flag_handler, value);
 }
 
+
 void Inc::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     int64_t value = arg->evaluate_rvalue(memory) + 1;
 
     arg->set_lvalue(memory, value);
     set_flags(flag_handler, value);
 }
+
 
 void Dec::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     int64_t value = arg->evaluate_rvalue(memory) - 1;
@@ -71,9 +74,11 @@ void Dec::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     set_flags(flag_handler, value);
 }
 
+
 void One::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     arg->set_lvalue(memory, 1);
 }
+
 
 void OneZ::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     if (flag_handler.get(FlagHandler::FlagType::zero)) {
@@ -81,9 +86,9 @@ void OneZ::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     }
 }
 
+
 void OneS::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
     if (flag_handler.get(FlagHandler::FlagType::sign)) {
         arg->set_lvalue(memory, 1);
     }
 }
-

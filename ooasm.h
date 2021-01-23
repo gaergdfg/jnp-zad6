@@ -8,8 +8,8 @@
 #include <string>
 #include <memory>
 
-/* =============== OOASM Elements =============== */
 
+/* =============== OOASM Elements =============== */
 
 class RValue {
 
@@ -119,8 +119,8 @@ public:
 	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const override;
 
 private:
-	std::shared_ptr<LValue> dst;
-	std::shared_ptr<RValue> src;
+	LValue_t dst;
+	RValue_t src;
 
 };
 
