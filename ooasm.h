@@ -84,9 +84,15 @@ class OOASMInstruction {
 public:
 	virtual ~OOASMInstruction() = default;
 
-	virtual void evaluate_initialise(Memory &memory, FlagHandler &flag_handler) const {};
+	virtual void evaluate_initialise(
+		[[maybe_unused]] Memory &memory,
+		[[maybe_unused]] FlagHandler &flag_handler
+	) const {};
 
-	virtual void evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {};
+	virtual void evaluate_execute(
+		[[maybe_unused]] Memory &memory,
+		[[maybe_unused]] FlagHandler &flag_handler
+	) const {};
 
 };
 

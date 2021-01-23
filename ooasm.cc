@@ -75,7 +75,10 @@ void Dec::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
 }
 
 
-void One::evaluate_execute(Memory &memory, FlagHandler &flag_handler) const {
+void One::evaluate_execute(
+    Memory &memory,
+    [[maybe_unused]] FlagHandler &flag_handler
+) const {
     arg->set_lvalue(memory, 1);
 }
 
