@@ -8,7 +8,6 @@ Computer::Computer(size_t memory_size) :
 
 void Computer::boot(const Program &program) {
 	memory.reset();
-	flag_handler.reset();
 
 	for (auto &instruction : program) {
 		instruction->evaluate_initialise(memory, flag_handler);
