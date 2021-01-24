@@ -33,7 +33,7 @@ int64_t Lea::evaluate_rvalue(const Memory &memory) const {
 
 /* =============== OOASM Instructions =============== */
 
-void Data::evaluate_initialise(Memory &memory, FlagHandler &) const {
+void Data::evaluate_initialise(Memory &memory) const {
     memory.create_var(id, val->evaluate_rvalue(memory));
 }
 

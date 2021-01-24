@@ -85,8 +85,7 @@ public:
 	virtual ~OOASMInstruction() = default;
 
 	virtual void evaluate_initialise(
-		[[maybe_unused]] Memory &memory,
-		[[maybe_unused]] FlagHandler &flag_handler
+		[[maybe_unused]] Memory &memory
 	) const {};
 
 	virtual void evaluate_execute(
@@ -104,7 +103,7 @@ public:
 
 	~Data() = default;
 
-	virtual void evaluate_initialise(Memory &memory, FlagHandler &flag_handler) const override;
+	virtual void evaluate_initialise(Memory &memory) const override;
 
 private:
 	Id id;

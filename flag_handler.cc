@@ -29,9 +29,3 @@ void FlagHandler::set(FlagType flag_type, bool val) {
 			throw std::invalid_argument("Invalid flag type.");
 	}
 }
-
-
-void FlagHandler::reset() {
-	flag_zero = false;
-	flag_sign = false;
-}
