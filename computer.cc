@@ -10,7 +10,7 @@ void Computer::boot(const Program &program) {
 	memory.reset();
 
 	for (auto &instruction : program) {
-		instruction->evaluate_initialise(memory, flag_handler);
+		instruction->evaluate_initialise(memory);
 	}
 	for (auto &instruction : program) {
 		instruction->evaluate_execute(memory, flag_handler);
